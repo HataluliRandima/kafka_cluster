@@ -20,7 +20,8 @@ defmodule KafkaCluster.Application do
       {Finch, name: KafkaCluster.Finch},
       # Start the Endpoint (http/https)
       KafkaClusterWeb.Endpoint,
-      KafkaCluster.Kaffe.ChargeListener
+      KafkaCluster.Kaffe.ChargeListener,
+      KafkaCluster.Kaffe.NotificationListener
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

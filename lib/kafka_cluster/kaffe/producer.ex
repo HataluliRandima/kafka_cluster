@@ -1,7 +1,4 @@
 defmodule KafkaCluster.Kaffe.Producer do
-  # def send_my_message({key, value}, topic) do
-  #   Kaffe.Producer.produce_sync(topic, [{key, value}])
-  # end
   require Logger
 
   def send_my_message({key, value}, topic, times \\ 1) when is_integer(times) and times > 0 do
@@ -16,13 +13,13 @@ defmodule KafkaCluster.Kaffe.Producer do
     end_time = :os.system_time(:millisecond)
     duration = end_time - start_time
 
-    Logger.info("Sent #{times} messages to topic #{topic} in #{duration} ms", log: :pr)
-    Logger.info("Sent messages to topic #{topic} in #{inspect value}", log: :pr)
+    Logger.info("Sent message to topic #{topic} in #{duration} ms", log: :pr)
+    Logger.info("Sent message to topic #{topic} with value :: #{inspect value}", log: :pr)
     Logger.info("Sent #{times} messages to topic #{topic} in #{duration} ms")
   end
 
-defp encode_message(message) do
- Jason.encode!(message)
-end
+  defp encode_message(message) do
+   Jason.encode!(message)
+  end
 
 end

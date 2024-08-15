@@ -14,11 +14,11 @@ defmodule KafkaCluster.Kaffe.ChargeListener do
       database: "rpt_01_dev")
 
     Logger.info("ChargeListener started and listening for new_charge notifications", log: :pr)
-      # Postgrex.Notifications.listen(:notifications, "new_charge")
+    # Postgrex.Notifications.listen(:notifications, "new_charge")
 
-        # Start listening to the "new_charge" channel
+    # Start listening to the "new_charge" channel
     case Postgrex.Notifications.listen(:notifications, "new_charge") do
-      :ok ->
+      {:ok, _} ->
         Logger.info("Successfully listening to the new_charge channel", log: :pr)
       {:error, reason} ->
         Logger.error("Failed to listen to the new_charge channel: #{inspect(reason)}", log: :pr)
