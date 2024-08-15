@@ -39,26 +39,80 @@ config :esbuild,
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
-  config :logger,
-  backends: [:console, {LoggerFileBackend, :file_log}],
-  format: "$time $metadata[$level] $message\n",
-  metadata: :all
+# config :logger,
+#   backends: [:console, {LoggerFileBackend, :file_log}],
+#   format: "$time $metadata[$level] $message\n",
+#   metadata: :all
+
+
+  # Configures Elixir's Logger
+config :logger, :console,
+format: "$date $time $metadata[$level] $message\n",
+metadata: [:request_id, :all]
+
+#config :logger, utc_log: true
+config :logger, backends: [
+:console,
+                          {LoggerFileBackend, :info},
+                          {LoggerFileBackend, :file_log}
+                        ]
+max_bytes = 500_000_000
 
 config :logger, :file_log,
-  path: "file.log",
-  level: :info # or whatever level you prefer
+  path: "logs/file.log",
+  level: :info
+
+config :logger, :info,
+  metadata: [:application, :module, :pid],
+  path: "logs/producer.log",
+  format: "$date $time [$level] [$metadata] $message\n",
+  level: :info,
+  metadata_filter: [log: :pr],
+  rotate: %{max_bytes: max_bytes, keep: 5}
+
+
+  # config :kaffe,
+  # producer: [
+  #   # heroku_kafka_env: true,
+  #   endpoints: [{'13.40.7.67', 9092}],
+  #   topics: ["kafka-topic-test"],
+  #   linger_ms: 10,
+  #   batch_size: 1000
+
+  #   # # optional
+  #   # partition_strategy: :md5
+  # ]
 
   config :kaffe,
   producer: [
-    # heroku_kafka_env: true,
-    endpoints: [{'13.40.7.67', 9092}],
-    topics: ["kafka-topic-test"],
-    linger_ms: 10,
-    batch_size: 1000
-
-    # # optional
-    # partition_strategy: :md5
+    endpoints: [{'13.40.7.67', 9092},],   # Kafka broker endpoints
+    topics: ["kafka-topic-test"],         # Topics to publish to
+    # partition_strategy: :round_robin,    # Partition strategy: :round_robin, :random, :consistent_hash
+    compression: :gzip,                  # Compression type: :none, :gzip, :snappy, :lz4, :zstd
+    required_acks: 1,                    # Acknowledgment: 0, 1, -1 (all)
+    max_retries: 5,                      # Max number of retries on failure
+    retry_backoff_ms: 100,               # Backoff time between retries (milliseconds)
+    batch_size: 100_000,                 # Maximum number of messages per batch
+    linger_ms: 50,                       # Time to wait before sending a batch (milliseconds)
+    max_batch_bytes: 10_000_000,         # Maximum size of a batch (in bytes)
+    client_id: "elixir_client",     # Client ID to identify the producer
+    timeout: 15_000,                     # Request timeout in milliseconds
+    request_timeout: 30_000,             # Timeout for producer requests (milliseconds)
+    metadata_refresh_interval_ms: 600_000, # How often to refresh metadata (milliseconds)
+    # sasl: [
+    #   mechanism: :plain,                 # SASL authentication mechanism (e.g., :plain, :scram_sha256, :scram_sha512)
+    #   username: "your-username",         # SASL username
+    #   password: "your-password"          # SASL password
+    # ],
+    # ssl: [
+    #   enable: false,                     # Enable SSL (true or false)
+    #   cacertfile: "path/to/ca-cert.pem", # Path to CA certificate
+    #   certfile: "path/to/cert.pem",      # Path to client certificate
+    #   keyfile: "path/to/key.pem"         # Path to client private key
+    # ],
+    log_level: :info                     # Log level: :debug, :info, :warn, :error
   ]
+
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "3.3.2",

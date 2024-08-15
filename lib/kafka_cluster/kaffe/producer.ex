@@ -16,6 +16,8 @@ defmodule KafkaCluster.Kaffe.Producer do
     end_time = :os.system_time(:millisecond)
     duration = end_time - start_time
 
+    Logger.info("Sent #{times} messages to topic #{topic} in #{duration} ms", log: :pr)
+    Logger.info("Sent messages to topic #{topic} in #{inspect value}", log: :pr)
     Logger.info("Sent #{times} messages to topic #{topic} in #{duration} ms")
   end
 

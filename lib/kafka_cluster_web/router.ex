@@ -21,11 +21,11 @@ defmodule KafkaClusterWeb.Router do
     resources "/messages", MessageController
   end
 
-  scope "/api", KafkaClusterWeb do
-    pipe_through :api
+  # scope "/api", KafkaClusterWeb do
+  #   pipe_through :api
 
-    post "/send_message", MessageController, :send_message
-  end
+  #   post "/send_message", MessageController, :send_message
+  # end
 
   # Other scopes may use custom stacks.
   # scope "/api", KafkaClusterWeb do
